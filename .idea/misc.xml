@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Black">
+    <option name="sdkName" value="WSL (Ubuntu-24.04): (/home/nathan/my_projects/openrouter-rankings/.venv/bin/python)" />
+  </component>
+  <component name="ProjectRootManager" version="2" project-jdk-name="WSL (Ubuntu-24.04): (/home/nathan/my_projects/openrouter-rankings/.venv/bin/python)" project-jdk-type="Python SDK">
+    <output url="file://$PROJECT_DIR$/out" />
+  </component>
+</project>
