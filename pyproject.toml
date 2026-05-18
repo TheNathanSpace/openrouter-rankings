@@ -1,3 +1,27 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "openrouter-rankings"
+version = "0.1.0"
+description = "A programatic tool to download and parse OpenRouter large language model rankings"
+authors = [
+    { name = "TheNathanSpace", email = "openrouter-rankings@usps.thenathan.space" }
+]
+dependencies = [
+    "beautifulsoup4>=4.14.3",
+    "playwright>=1.59.0",
+]
+requires-python = ">=3.12"
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.4.4",
+    "pre-commit>=4.0.0",
+    "validate-pyproject>=0.25",
+]
+
 [tool.ruff]
 line-length = 100
 target-version = "py312"

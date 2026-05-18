@@ -7,6 +7,8 @@ from dataclasses import dataclass, field
 from bs4 import BeautifulSoup
 from playwright.async_api import Locator, Page, async_playwright
 
+from src.utils import find_idea_root
+
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s - %(levelname)s - %(message)s",
@@ -145,7 +147,8 @@ async def get_page_content(url: str) -> str:
 
 async def main():
     logger.info("Deleting existing output directory")
-    output_directory = pathlib.Path("output")
+    root_dir = find_idea_root(pathlib.Path.cwd())
+    output_directory = root_dir / "output"
     shutil.rmtree(output_directory, ignore_errors=True)
     output_directory.mkdir(parents=True, exist_ok=True)
 

@@ -14,6 +14,12 @@ pre-commit install
 pre-commit run --all-files
 ```
 
+Install dependencies:
+
+```bash
+pip install -e .[dev]
+```
+
 ## Generative AI Disclosure
 
 This project was developed with the assistance of JetBrains' Junie, an AI agent for software development. All aspects of
