@@ -45,3 +45,9 @@ quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
+
+[tool.markdownlint-cli2]
+noProgress = true
+
+[tool.markdownlint-cli2.config]
+line-length = { line_length = 120 }

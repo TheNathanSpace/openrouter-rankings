@@ -258,10 +258,10 @@ def alphabetical_compare(a: str, b: str) -> int:
     a_words = split_to_words(a)
     b_words = split_to_words(b)
 
-    a_alph = " ".join(sorted(a_words))
-    b_alph = " ".join(sorted(b_words))
+    a_alpha = " ".join(sorted(a_words))
+    b_alpha = " ".join(sorted(b_words))
 
-    return levenshtein_distance(a_alph, b_alph)
+    return levenshtein_distance(a_alpha, b_alpha)
 
 
 def match_provider_models(

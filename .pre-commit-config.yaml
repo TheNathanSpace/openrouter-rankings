@@ -11,15 +11,31 @@ repos:
     rev: v0.4.4
     hooks:
       - id: ruff
-        args: [--fix, --unsafe-fixes]
+        args: [ --fix, --unsafe-fixes ]
         files: ^backend/
       - id: ruff-format
-        args: [--line-length=100]
+        args: [ --line-length=100 ]
         files: ^backend/
 
   - repo: https://github.com/abravalheri/validate-pyproject
     rev: v0.25
     hooks:
       - id: validate-pyproject
-        additional_dependencies: ["validate-pyproject-schema-store[all]"]
+        additional_dependencies: [ "validate-pyproject-schema-store[all]" ]
         files: ^backend/pyproject\.toml$
+
+  - repo: https://github.com/DavidAnson/markdownlint-cli2
+    rev: v0.22.1
+    hooks:
+      - id: markdownlint-cli2
+        args:
+          - --fix
+          - --config
+          - backend/pyproject.toml
+          - --configPointer
+          - /tool/markdownlint-cli2
+
+  - repo: https://github.com/crate-ci/typos
+    rev: v1.46.3
+    hooks:
+      - id: typos
