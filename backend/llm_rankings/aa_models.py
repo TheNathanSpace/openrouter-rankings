@@ -101,6 +101,9 @@ class AAModel(AABaseModel):
             return {}
         return self.pricing.get_minimal()
 
+    def __hash__(self) -> int:
+        return self.id.__hash__()
+
 
 class ArtificialAnalysisAPIResponse(AABaseModel):
     status: int

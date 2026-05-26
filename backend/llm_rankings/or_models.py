@@ -137,6 +137,9 @@ class OpenRouterModel(ORBaseModel):
         else:
             return None
 
+    def __hash__(self) -> int:
+        return self.id.__hash__()
+
 
 class OpenRouterAPIResponse(ORBaseModel):
     data: list[OpenRouterModel]

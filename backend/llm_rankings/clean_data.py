@@ -1,5 +1,6 @@
 import json
 import logging
+from itertools import product
 
 from rapidfuzz.distance.metrics_cpp import levenshtein_distance
 
@@ -163,38 +164,42 @@ def alphabetical_compare(a: OpenRouterModel, b: AAModel) -> int:
     return levenshtein_distance(a_alpha, b_alpha)
 
 
+def get_match_score(or_model: OpenRouterModel, aa_model: AAModel) -> float:
+    if not validate_match(or_model, aa_model):
+        return float("inf")
+    distance = alphabetical_compare(or_model, aa_model)
+    if or_model.get_clean_name() == "qwen3 6 flash":
+        logging.debug(f"{or_model} / {aa_model} : {distance}")
+    if distance <= 4:
+        return distance
+    return float("inf")
+
+
 def match_models(
     or_models: list[OpenRouterModel], aa_models: list[AAModel]
 ) -> tuple[list[tuple[OpenRouterModel, AAModel]], list[OpenRouterModel], list[AAModel]]:
     """The list of models should already be filtered down to the intended provider."""
     remaining_or_models = or_models.copy()
     remaining_aa_models = aa_models.copy()
-
-    # Pair up using Levenshtein distance
     matched_models: list[tuple[OpenRouterModel, AAModel]] = []
-    for or_model in remaining_or_models.copy():
-        # TODO: Instead of matching with the lowest remaining,
-        #  look for the actual lowest across the whole space?
-        # qwen3 6 flash / qwen3 6 35b a3b : 7
-        # qwen3 6 flash / qwen3 6 27b     : 7
-        # qwen3 6 flash / qwen3 6 plus    : 3
-        # qwen3 6 flash / qwen3 6 max     : 4
-        closest_match: AAModel | None = None
-        closest_distance = float("inf")
-        for aa_model in remaining_aa_models:
-            if not validate_match(or_model, aa_model):
-                continue
-            distance = alphabetical_compare(or_model, aa_model)
-            if or_model.get_clean_name() == "qwen3 6 flash":
-                logging.debug(f"{or_model} / {aa_model} : {distance}")
-            if distance < closest_distance and distance <= 4:
-                closest_distance = distance
-                closest_match = aa_model
 
-        if closest_match:
-            matched_models.append((or_model, closest_match))
-            remaining_or_models.remove(or_model)
-            remaining_aa_models.remove(closest_match)
+    while len(remaining_or_models) > 0 and len(remaining_aa_models) > 0:
+        combinations: list[tuple[OpenRouterModel, AAModel]] = list(
+            product(remaining_or_models, remaining_aa_models)
+        )
+        scores: dict[tuple[OpenRouterModel, AAModel], float] = {
+            (or_model, aa_model): get_match_score(or_model, aa_model)
+            for or_model, aa_model in combinations
+        }
+        min_combination: tuple[OpenRouterModel, AAModel]
+        min_score: float
+        min_combination, min_score = min(scores.items(), key=lambda x: x[1])
+        if min_score <= 4:
+            matched_models.append(min_combination)
+            remaining_or_models.remove(min_combination[0])
+            remaining_aa_models.remove(min_combination[1])
+        else:
+            break
 
     return (
         matched_models,
@@ -211,11 +216,20 @@ def write_matched_models(
 ):
     logging.debug(f"Writing matched models for provider {provider_name} to file")
     provider_dict = {
+        "openrouter_to_artificialanalysis_model_names": [
+            f"{m1.get_clean_name()} -> {m2.get_clean_name()}" for m1, m2 in matched_models
+        ],
+        "unmatched_model_names": {
+            "openrouter": [m.get_clean_name() for m in remaining_or_models],
+            "artificialanalysis": [m.get_clean_name() for m in remaining_aa_models],
+        },
         "openrouter_to_artificialanalysis_models": [
             [m1.model_dump(), m2.model_dump_json()] for m1, m2 in matched_models
         ],
-        "unmatched_openrouter_models": [m.model_dump() for m in remaining_or_models],
-        "unmatched_artificialanalysis_models": [m.model_dump() for m in remaining_aa_models],
+        "unmatched_models": {
+            "unmatched_openrouter_models": [m.model_dump() for m in remaining_or_models],
+            "unmatched_artificialanalysis_models": [m.model_dump() for m in remaining_aa_models],
+        },
     }
     provider_dir = get_provider_dir()
     (provider_dir / f"{provider_name}.json").write_text(json.dumps(provider_dict, indent=4))
