@@ -15,7 +15,9 @@ dependencies = [
     "levenshtein==0.27.3",
     "python-slugify[unidecode]==8.0.4",
     "pydantic==2.13.4",
-    "pydantic_sqlite==0.5.1"
+    "pydantic_sqlite==0.5.1",
+    "fastapi==0.136.3",
+    "uvicorn==0.48.0"
 ]
 requires-python = ">=3.12"
 

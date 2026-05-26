@@ -32,6 +32,12 @@ def populate_with_models():
     logging.debug(f"Wrote {len(models)} models to database")
 
 
+def get_all_models() -> list[CombinedModel]:
+    db: DataBase = initialize_database()
+    models: list[CombinedModel] = [model for model in db("models")]
+    return models
+
+
 if __name__ == "__main__":
     setup_logging("DEBUG")
     wipe_database()

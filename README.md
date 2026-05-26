@@ -71,6 +71,15 @@ Activate the virtual environment:
 source .venv/bin/activate
 ```
 
+## Usage
+
+The back-end API can be run with one of:
+
+- `python backend/llm_rankings/api.py`
+- `uvicorn llm_rankings.api:app --reload`
+
+(Ensure the virtual environment is activated.)
+
 ## Generative AI Disclosure
 
 This project was developed with the assistance of an LLM coding agent. When work was off-loaded to the LLM, all aspects

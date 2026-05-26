@@ -168,8 +168,6 @@ def get_match_score(or_model: OpenRouterModel, aa_model: AAModel) -> float:
     if not validate_match(or_model, aa_model):
         return float("inf")
     distance = alphabetical_compare(or_model, aa_model)
-    if or_model.get_clean_name() == "qwen3 6 flash":
-        logging.debug(f"{or_model} / {aa_model} : {distance}")
     if distance <= 4:
         return distance
     return float("inf")
